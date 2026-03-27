@@ -302,12 +302,15 @@
       position: relative; z-index: 2;
       display: flex;
       align-items: center;
-      gap: clamp(20px,4vw,52px);
+      gap: clamp(16px,4vw,52px);
       flex-wrap: wrap;
       justify-content: center;
       opacity: 0;
       animation: fade-up 0.9s var(--ease) 0.4s forwards;
       margin-bottom: 32px;
+    }
+    .h-stat {
+      text-align: center;
     }
     .h-stat .hn {
       font-family: 'Manrope', sans-serif;
@@ -326,7 +329,24 @@
       margin-top: 5px;
     }
     .h-sep { width:1px; height:44px; background: rgba(26,15,8,0.12); }
-    @media(max-width:460px){ .h-sep { display:none; } }
+    .hero-stats .shiny-btn { flex-shrink: 0; }
+
+    @media(max-width:520px){
+      .hero-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px 12px;
+        justify-items: center;
+        align-items: center;
+      }
+      .h-sep { display: none; }
+      .hero-stats .shiny-btn {
+        grid-column: 1 / -1;
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+      }
+    }
 
     /* ═══════════════════════════════════
        STRIP CONFIRMAÇÃO
