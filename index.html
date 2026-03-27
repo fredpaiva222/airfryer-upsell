@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Air Fryer em 15 Minutos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ═══════════════════════════════════════════
+       TOKENS
+    ═══════════════════════════════════════════ */
+    :root {
+      --forest:  #01472e;
+      --sage:    #ccd5ae;
+      --olive:   #e9edc9;
+      --cream:   #fefae0;
+      --moss:    #a3b18a;
+      --radius-xl: 5rem;
+      --radius-md: 2.5rem;
+      --ease:    cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--forest);
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    /* ─── REVEAL ANIMATION ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(80px);
+      transition: opacity 1.2s var(--ease), transform 1.2s var(--ease);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-d1 { transition-delay: 0.05s; }
+    .reveal-d2 { transition-delay: 0.12s; }
+    .reveal-d3 { transition-delay: 0.20s; }
+    .reveal-d4 { transition-delay: 0.28s; }
+    .reveal-d5 { transition-delay: 0.36s; }
+    .reveal-d6 { transition-delay: 0.44s; }
+    .reveal-d7 { transition-delay: 0.52s; }
+
+    /* ─── FLOAT ─── */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%       { transform: translateY(-20px) rotate(5deg); }
+    }
+    .floating { animation: float 5s ease-in-out infinite; }
+    .floating-slow { animation: float 7s ease-in-out infinite; }
+    .floating-med  { animation: float 6s ease-in-out infinite 1s; }
+
+    /* ═══════════════════════════════════════════
+       HERO — BLOCO 1
+    ═══════════════════════════════════════════ */
+    .hero {
+      background: var(--sage);
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: clamp(60px, 10vw, 100px) clamp(20px, 6vw, 60px) clamp(48px, 8vw, 80px);
+      position: relative;
+      overflow: hidden;
+      border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+    }
+
+    /* floating orbs de fundo */
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(1,71,46,0.07);
+      pointer-events: none;
+    }
+    .hero-orb-1 { width: 500px; height: 500px; top: -120px; right: -140px; }
+    .hero-orb-2 { width: 300px; height: 300px; bottom: 40px; left: -80px; background: rgba(1,71,46,0.05); }
+
+    /* floating food images */
+    .hero-float-img {
+      position: absolute;
+      border-radius: 3rem;
+      object-fit: cover;
+      box-shadow: 0 24px 60px rgba(1,71,46,0.2);
+    }
+    .hfi-1 { width: clamp(120px,16vw,200px); height: clamp(150px,20vw,260px); top: 8%; right: 4%; }
+    .hfi-2 { width: clamp(100px,13vw,170px); height: clamp(120px,16vw,210px); bottom: 10%; left: 3%; }
+    .hfi-3 { width: clamp(80px,10vw,130px); height: clamp(80px,10vw,130px); top: 18%; left: 8%; border-radius: 50%; }
+    @media (max-width:600px) { .hfi-3 { display:none; } }
+
+    .hero-pre {
+      text-align: center;
+      margin-bottom: 28px;
+      z-index: 2;
+    }
+    .hero-pre h2 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(15px, 3vw, 22px);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--forest);
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+    .hero-pre p {
+      font-size: clamp(12px, 2vw, 14px);
+      color: rgba(1,71,46,0.65);
+      letter-spacing: 0.05em;
+      font-weight: 500;
+    }
+
+    .hero-title-wrap {
+      text-align: center;
+      z-index: 2;
+      margin-bottom: 24px;
+    }
+    .hero-title-wrap h1 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(56px, 14vw, 160px);
+      line-height: 0.82;
+      letter-spacing: -0.03em;
+      color: var(--forest);
+      text-transform: uppercase;
+      overflow: hidden;
+    }
+    .hero-title-wrap h1 .line-outline {
+      -webkit-text-stroke: 2px var(--forest);
+      color: transparent;
+    }
+
+    .hero-sub {
+      text-align: center;
+      z-index: 2;
+      margin-bottom: 44px;
+    }
+    .hero-sub p {
+      font-size: clamp(14px, 2.5vw, 18px);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--forest);
+      opacity: 0.75;
+      max-width: 560px;
+    }
+
+    .hero-bottom {
+      display: flex;
+      gap: clamp(24px, 5vw, 64px);
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+      z-index: 2;
+    }
+    .hero-stat {}
+    .hero-stat .hs-n {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(32px,6vw,52px);
+      color: var(--forest);
+      line-height: 1;
+    }
+    .hero-stat .hs-l {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(1,71,46,0.55);
+      margin-top: 4px;
+    }
+    .hero-sep { width: 1px; height: 48px; background: rgba(1,71,46,0.2); }
+    @media (max-width:480px) { .hero-sep { display:none; } }
+
+    .hero-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--forest);
+      color: var(--cream);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 18px 36px;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: background 0.3s var(--ease), transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+      box-shadow: 0 12px 40px rgba(1,71,46,0.25);
+    }
+    .hero-cta-btn:hover {
+      background: #023d27;
+      transform: translateY(-3px);
+      box-shadow: 0 20px 50px rgba(1,71,46,0.35);
+    }
+
+    /* ═══════════════════════════════════════════
+       BLOCO 2 — PONTE
+    ═══════════════════════════════════════════ */
+    .ponte {
+      background: var(--olive);
+      padding: clamp(64px,10vw,120px) clamp(20px,6vw,80px);
+      border-radius: var(--radius-xl);
+      margin: -2px 0;
+      text-align: center;
+    }
+    .ponte .p-label {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--moss);
+      margin-bottom: 28px;
+      padding: 8px 20px;
+      border: 1.5px solid var(--moss);
+      border-radius: 100px;
+    }
+    .ponte h2 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(28px, 5vw, 48px);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: var(--forest);
+      max-width: 700px;
+      margin: 0 auto 28px;
+      text-transform: uppercase;
+    }
+    .ponte p {
+      font-size: clamp(15px,2vw,18px);
+      color: rgba(1,71,46,0.75);
+      max-width: 620px;
+      margin: 0 auto;
+      line-height: 1.75;
+      font-weight: 400;
+    }
+    .ponte p strong { color: var(--forest); font-weight: 700; }
+
+    /* ═══════════════════════════════════════════
+       BLOCO 3 — 3 PASSOS
+    ═══════════════════════════════════════════ */
+    .passos {
+      background: var(--cream);
+      padding: clamp(64px,10vw,120px) clamp(20px,6vw,80px);
+      border-radius: var(--radius-xl);
+      margin: -2px 0;
+    }
+    .passos-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .passos-header .p-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--moss);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .passos-header h2 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(32px,6vw,72px);
+      letter-spacing: -0.02em;
+      line-height: 0.9;
+      text-transform: uppercase;
+      color: var(--forest);
+    }
+    .passos-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    @media (min-width:700px) { .passos-grid { grid-template-columns: repeat(3,1fr); } }
+
+    .passo-card {
+      background: var(--sage);
+      border-radius: var(--radius-md);
+      padding: 36px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+    }
+    .passo-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(1,71,46,0.18);
+    }
+    .passo-card .pnum {
+      font-family: 'Anton', sans-serif;
+      font-size: 80px;
+      color: rgba(1,71,46,0.08);
+      position: absolute;
+      top: -10px;
+      right: 16px;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .passo-card .pstep {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--moss);
+      margin-bottom: 14px;
+      display: block;
+    }
+    .passo-card h3 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(18px,3vw,26px);
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--forest);
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .passo-card p {
+      font-size: 14px;
+      color: rgba(1,71,46,0.65);
+      line-height: 1.6;
+    }
+
+    /* ═══════════════════════════════════════════
+       BLOCO 4 — GALERIA RECEITAS
+    ═══════════════════════════════════════════ */
+    .galeria {
+      background: var(--forest);
+      padding: clamp(64px,10vw,120px) 0;
+      border-radius: var(--radius-xl);
+      margin: -2px 0;
+      overflow: hidden;
+    }
+    .galeria-head {
+      padding: 0 clamp(20px,6vw,80px) 56px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .galeria-head h2 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(36px,8vw,100px);
+      letter-spacing: -0.04em;
+      line-height: 0.85;
+      text-transform: uppercase;
+      color: var(--sage);
+    }
+    .galeria-head h2 .outline {
+      -webkit-text-stroke: 2px var(--sage);
+      color: transparent;
+    }
+    .galeria-head p {
+      font-size: 13px;
+      color: rgba(204,213,174,0.55);
+      max-width: 240px;
+      line-height: 1.65;
+      font-weight: 400;
+    }
+
+    .galeria-scroll {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding: 8px clamp(20px,6vw,80px) 24px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .galeria-scroll::-webkit-scrollbar { display:none; }
+
+    .g-card {
+      min-width: clamp(200px,28vw,320px);
+      scroll-snap-align: start;
+      flex-shrink: 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    .g-card img {
+      width: 100%;
+      height: clamp(260px,35vw,420px);
+      object-fit: cover;
+      display: block;
+      transition: transform 0.7s var(--ease);
+    }
+    .g-card:hover img { transform: scale(1.08); }
+    .g-card .gc-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(1,71,46,0.3);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      transition: opacity 0.4s var(--ease);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .g-card:hover .gc-overlay { opacity: 1; }
+    .gc-overlay .quick-btn {
+      background: #fff;
+      color: var(--forest);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      border-radius: 100px;
+      transform: translateY(32px);
+      transition: transform 0.4s var(--ease);
+    }
+    .g-card:hover .quick-btn { transform: translateY(0); }
+    .g-card .gc-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 28px 20px 20px;
+      background: linear-gradient(to top, rgba(1,30,18,0.85) 0%, transparent 100%);
+    }
+    .g-card .gc-info h4 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(16px,2.5vw,22px);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .g-card .gc-info span {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--sage);
+    }
+    .g-card .gc-pill {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: var(--sage);
+      color: var(--forest);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 100px;
+    }
+
+    /* ═══════════════════════════════════════════
+       BLOCO 5 — BÔNUS
+    ═══════════════════════════════════════════ */
+    .bonus {
+      background: var(--olive);
+      padding: clamp(64px,10vw,120px) clamp(20px,6vw,80px);
+      border-radius: var(--radius-xl);
+      margin: -2px 0;
+    }
+    .bonus-head {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .bonus-head .b-tag {
+      display: inline-block;
+      background: var(--forest);
+      color: var(--sage);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 8px 22px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+    .bonus-head h2 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(32px,7vw,80px);
+      letter-spacing: -0.03em;
+      line-height: 0.88;
+      text-transform: uppercase;
+      color: var(--forest);
+      margin-bottom: 16px;
+    }
+    .bonus-head h2 .outline {
+      -webkit-text-stroke: 2px var(--forest);
+      color: transparent;
+    }
+    .bonus-head p {
+      font-size: 14px;
+      color: rgba(1,71,46,0.6);
+      letter-spacing: 0.05em;
+      font-weight: 500;
+    }
+
+    .bonus-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2px;
+      max-width: 900px;
+      margin: 0 auto;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    @media (min-width:600px) { .bonus-grid { grid-template-columns: 1fr 1fr; } }
+
+    .bonus-item {
+      background: var(--cream);
+      padding: 32px 28px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      transition: background 0.3s var(--ease);
+      cursor: default;
+    }
+    .bonus-item:hover { background: var(--sage); }
+    .bonus-item.span2 { grid-column: 1 / -1; }
+    .bonus-item .bi-num {
+      font-family: 'Anton', sans-serif;
+      font-size: 40px;
+      color: rgba(1,71,46,0.12);
+      line-height: 1;
+      min-width: 44px;
+      flex-shrink: 0;
+    }
+    .bonus-item .bi-ico { font-size: 32px; flex-shrink: 0; margin-top: 2px; }
+    .bonus-item .bi-text h4 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(16px,2.5vw,22px);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--forest);
+      margin-bottom: 7px;
+      line-height: 1.1;
+    }
+    .bonus-item .bi-text p {
+      font-size: 13px;
+      color: rgba(1,71,46,0.65);
+      line-height: 1.65;
+    }
+
+    /* ═══════════════════════════════════════════
+       BLOCO 5b — ANCORAGEM
+    ═══════════════════════════════════════════ */
+    .ancora {
+      background: var(--forest);
+      padding: clamp(64px,10vw,120px) clamp(20px,6vw,80px);
+      border-radius: var(--radius-xl);
+      margin: -2px 0;
+      text-align: center;
+    }
+    .ancora h2 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(28px,5vw,52px);
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--sage);
+      max-width: 640px;
+      margin: 0 auto 20px;
+      line-height: 1.05;
+    }
+    .ancora p {
+      font-size: 15px;
+      color: rgba(204,213,174,0.55);
+      max-width: 520px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+    }
+    .ancora-num-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(20px,4vw,60px);
+      flex-wrap: wrap;
+    }
+    .an-item .an-n {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(32px,6vw,56px);
+      color: var(--sage);
+      line-height: 1;
+    }
+    .an-item .an-l {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(204,213,174,0.4);
+      margin-top: 6px;
+    }
+    .an-sep { width: 1px; height: 52px; background: rgba(204,213,174,0.15); }
+    @media(max-width:480px) { .an-sep { display:none; } }
+
+    /* ═══════════════════════════════════════════
+       BLOCO 6 — CARD DE OFERTA
+    ═══════════════════════════════════════════ */
+    .oferta {
+      background: var(--sage);
+      padding: clamp(64px,10vw,120px) clamp(20px,6vw,80px);
+      border-radius: var(--radius-xl);
+      margin: -2px 0;
+    }
+    .oferta-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      max-width: 960px;
+      margin: 0 auto;
+      align-items: start;
+    }
+    @media(min-width:820px) { .oferta-inner { grid-template-columns: 1fr 1fr; } }
+
+    .oferta-left {}
+    .oferta-left .o-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--moss);
+      display: block;
+      margin-bottom: 20px;
+    }
+    .oferta-left h2 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(28px,5vw,52px);
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--forest);
+      line-height: 0.95;
+      margin-bottom: 28px;
+    }
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: rgba(1,71,46,0.85);
+      line-height: 1.5;
+    }
+    .check-item .ci {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--forest);
+      color: var(--sage);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .check-item .ci.outline-ci {
+      background: transparent;
+      border: 1.5px solid var(--forest);
+      color: var(--forest);
+    }
+
+    .oferta-card {
+      background: var(--cream);
+      border-radius: var(--radius-md);
+      padding: 40px 32px;
+      box-shadow: 0 24px 80px rgba(1,71,46,0.18);
+      position: sticky;
+      top: 24px;
+    }
+    .oferta-card .oc-tag {
+      display: inline-block;
+      background: var(--forest);
+      color: var(--sage);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 7px 18px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+    .oferta-card .oc-title {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(22px,3.5vw,32px);
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--forest);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .oferta-card .oc-sub {
+      font-size: 13px;
+      color: rgba(1,71,46,0.55);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .preco-wrap {
+      border-top: 1px solid rgba(1,71,46,0.12);
+      border-bottom: 1px solid rgba(1,71,46,0.12);
+      padding: 24px 0;
+      margin-bottom: 28px;
+    }
+    .preco-wrap .pw-de {
+      font-size: 14px;
+      color: rgba(1,71,46,0.35);
+      text-decoration: line-through;
+      margin-bottom: 4px;
+    }
+    .preco-wrap .pw-eco {
+      display: inline-block;
+      background: rgba(1,71,46,0.08);
+      color: var(--forest);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+    }
+    .preco-wrap .pw-por {
+      font-family: 'Anton', sans-serif;
+      font-size: 72px;
+      color: var(--forest);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .preco-wrap .pw-por sup {
+      font-size: 28px;
+      vertical-align: top;
+      margin-top: 16px;
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+    }
+    .preco-wrap .pw-obs {
+      font-size: 12px;
+      color: rgba(1,71,46,0.45);
+      margin-top: 10px;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-oferta {
+      display: block;
+      width: 100%;
+      background: var(--forest);
+      color: var(--cream);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 20px 24px;
+      border-radius: 100px;
+      text-align: center;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s var(--ease), transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+      box-shadow: 0 12px 40px rgba(1,71,46,0.3);
+    }
+    .btn-oferta:hover {
+      background: #023d27;
+      transform: translateY(-3px);
+      box-shadow: 0 20px 50px rgba(1,71,46,0.4);
+    }
+    .oc-selos {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .oc-selos span {
+      font-size: 11px;
+      color: rgba(1,71,46,0.45);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    /* ═══════════════════════════════════════════
+       BLOCO 7 — CTA FINAL + GARANTIA
+    ═══════════════════════════════════════════ */
+    .cta-final {
+      background: var(--forest);
+      padding: clamp(80px,12vw,140px) clamp(20px,6vw,80px);
+      border-radius: var(--radius-xl);
+      margin: -2px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-bg-text {
+      position: absolute;
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(80px,20vw,260px);
+      font-weight: 900;
+      color: rgba(204,213,174,0.03);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      white-space: nowrap;
+      pointer-events: none;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+    .cta-final .garantia-strip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(204,213,174,0.08);
+      border: 1px solid rgba(204,213,174,0.15);
+      border-radius: 100px;
+      padding: 10px 22px;
+      margin-bottom: 44px;
+    }
+    .cta-final .garantia-strip span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--sage);
+    }
+    .cta-final h2 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(36px,8vw,100px);
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      color: var(--sage);
+      line-height: 0.88;
+      max-width: 800px;
+      margin: 0 auto 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-final h2 .outline {
+      -webkit-text-stroke: 2px var(--sage);
+      color: transparent;
+    }
+    .cta-final p {
+      font-size: 15px;
+      color: rgba(204,213,174,0.5);
+      max-width: 480px;
+      margin: 0 auto 52px;
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-final .btn-final {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--sage);
+      color: var(--forest);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 22px 52px;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: background 0.3s var(--ease), transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.25);
+      position: relative;
+      z-index: 1;
+    }
+    .cta-final .btn-final:hover {
+      background: var(--olive);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+    }
+    .cta-final .recusar {
+      display: block;
+      margin-top: 24px;
+      font-size: 11px;
+      color: rgba(204,213,174,0.2);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      transition: color 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-final .recusar:hover { color: rgba(204,213,174,0.4); }
+
+    /* ═══════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════ */
+    footer {
+      background: var(--forest);
+      border-top: 1px solid rgba(204,213,174,0.08);
+      padding: 28px clamp(20px,6vw,80px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer p {
+      font-size: 11px;
+      color: rgba(204,213,174,0.3);
+      letter-spacing: 0.1em;
+    }
+    footer a { color: rgba(204,213,174,0.3); text-decoration: none; }
+    footer a:hover { color: rgba(204,213,174,0.6); }
+  </style>
+</head>
+<body>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+
+    <!-- Imagens flutuantes -->
+    <img class="hero-float-img hfi-1 floating"
+         src="https://images.unsplash.com/photo-1598515213692-bff8d8a2d5fb?w=500&q=80"
+         alt="Frango Air Fryer" loading="eager" />
+    <img class="hero-float-img hfi-2 floating-slow"
+         src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&q=80"
+         alt="Batata Air Fryer" loading="eager" />
+    <img class="hero-float-img hfi-3 floating-med"
+         src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400&q=80"
+         alt="Brownie Air Fryer" loading="eager" />
+
+    <!-- Pre-headline -->
+    <div class="hero-pre reveal">
+      <h2>⚠ ESPERE — SEU PEDIDO AINDA ESTÁ SENDO PROCESSADO</h2>
+      <p>Não feche esta página. Esta oferta aparece uma única vez e desaparece quando você sair.</p>
+    </div>
+
+    <!-- Título principal -->
+    <div class="hero-title-wrap reveal reveal-d1">
+      <h1>
+        AIR FRYER<br>
+        <span class="line-outline">EM 15</span><br>
+        MINUTOS
+      </h1>
+    </div>
+
+    <!-- Sub -->
+    <div class="hero-sub reveal reveal-d2">
+      <p>+ de 150 receitas de Almoço, Lanches e Jantar com Vídeo passo a passo</p>
+    </div>
+
+    <!-- Stats + CTA -->
+    <div class="hero-bottom reveal reveal-d3">
+      <div class="hero-stat">
+        <div class="hs-n">+150</div>
+        <div class="hs-l">Receitas em vídeo</div>
+      </div>
+      <div class="hero-sep"></div>
+      <div class="hero-stat">
+        <div class="hs-n">15</div>
+        <div class="hs-l">Minutos ou menos</div>
+      </div>
+      <div class="hero-sep"></div>
+      <div class="hero-stat">
+        <div class="hs-n">7</div>
+        <div class="hs-l">Bônus exclusivos</div>
+      </div>
+      <div class="hero-sep"></div>
+      <a href="#oferta" class="hero-cta-btn">Ver oferta →</a>
+    </div>
+  </section>
+
+  <!-- ══ BLOCO 2 — PONTE ══ -->
+  <section class="ponte">
+    <span class="p-label reveal">Você já deu o primeiro passo</span>
+    <h2 class="reveal reveal-d1">O café da manhã já está garantido.<br>E o restante do dia?</h2>
+    <p class="reveal reveal-d2">
+      É por isso que, para quem comprou hoje, preparamos algo especial: a coleção completa com <strong>mais de 150 receitas em vídeo</strong> para fechar o ciclo do dia inteiro, com o mesmo passo a passo simples que você já vai encontrar nas receitas de café da manhã.
+    </p>
+  </section>
+
+  <!-- ══ BLOCO 3 — 3 PASSOS ══ -->
+  <section class="passos">
+    <div class="passos-header">
+      <span class="p-label reveal">Como funciona</span>
+      <h2 class="reveal reveal-d1">3 passos.<br><span style="-webkit-text-stroke:2px var(--forest);color:transparent">Sem complicação.</span></h2>
+    </div>
+    <div class="passos-grid">
+      <div class="passo-card reveal reveal-d1">
+        <span class="pnum">1</span>
+        <span class="pstep">Passo 01</span>
+        <h3>Escolha a receita na coleção</h3>
+        <p>+150 opções organizadas por categoria. Almoço, lanche ou jantar — encontrou em segundos.</p>
+      </div>
+      <div class="passo-card reveal reveal-d2">
+        <span class="pnum">2</span>
+        <span class="pstep">Passo 02</span>
+        <h3>Assista o vídeo no seu ritmo</h3>
+        <p>Pause, volte, repita à vontade. Passo a passo do início ao fim, sem anúncio no meio.</p>
+      </div>
+      <div class="passo-card reveal reveal-d3">
+        <span class="pnum">3</span>
+        <span class="pstep">Passo 03</span>
+        <h3>Coloque na mesa</h3>
+        <p>Sirva em 15 minutos e receba os elogios que você merece.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ BLOCO 4 — GALERIA ══ -->
+  <section class="galeria">
+    <div class="galeria-head">
+      <h2 class="reveal">O que você<br><span class="outline">vai fazer</span></h2>
+      <p class="reveal reveal-d1">Cada foto é uma receita real. Cada receita tem vídeo passo a passo.</p>
+    </div>
+    <div class="galeria-scroll">
+      <div class="g-card">
+        <img src="https://images.unsplash.com/photo-1598515213692-bff8d8a2d5fb?w=600&q=80" alt="Frango" loading="lazy" />
+        <div class="gc-overlay"><div class="quick-btn">Ver receita</div></div>
+        <div class="gc-info"><h4>Frango Crocante</h4><span>Air Fryer · 12 min</span></div>
+        <span class="gc-pill">12 min</span>
+      </div>
+      <div class="g-card">
+        <img src="https://images.unsplash.com/photo-1563897539633-7374c276519b?w=600&q=80" alt="Costela" loading="lazy" />
+        <div class="gc-overlay"><div class="quick-btn">Ver receita</div></div>
+        <div class="gc-info"><h4>Costela Suculenta</h4><span>Air Fryer · 15 min</span></div>
+        <span class="gc-pill">15 min</span>
+      </div>
+      <div class="g-card">
+        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80" alt="Pizza" loading="lazy" />
+        <div class="gc-overlay"><div class="quick-btn">Ver receita</div></div>
+        <div class="gc-info"><h4>Pizza Artesanal</h4><span>Air Fryer · 12 min</span></div>
+        <span class="gc-pill">12 min</span>
+      </div>
+      <div class="g-card">
+        <img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&q=80" alt="Batata" loading="lazy" />
+        <div class="gc-overlay"><div class="quick-btn">Ver receita</div></div>
+        <div class="gc-info"><h4>Batata Sequinha</h4><span>Air Fryer · 15 min</span></div>
+        <span class="gc-pill">15 min</span>
+      </div>
+      <div class="g-card">
+        <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80" alt="Hambúrguer" loading="lazy" />
+        <div class="gc-overlay"><div class="quick-btn">Ver receita</div></div>
+        <div class="gc-info"><h4>Hambúrguer Gourmet</h4><span>Air Fryer · 14 min</span></div>
+        <span class="gc-pill">14 min</span>
+      </div>
+      <div class="g-card">
+        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80" alt="Salmão" loading="lazy" />
+        <div class="gc-overlay"><div class="quick-btn">Ver receita</div></div>
+        <div class="gc-info"><h4>Salmão ao Limão</h4><span>Air Fryer · 10 min</span></div>
+        <span class="gc-pill">10 min</span>
+      </div>
+      <div class="g-card">
+        <img src="https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=600&q=80" alt="Costelinha" loading="lazy" />
+        <div class="gc-overlay"><div class="quick-btn">Ver receita</div></div>
+        <div class="gc-info"><h4>Costelinha BBQ</h4><span>Air Fryer · 15 min</span></div>
+        <span class="gc-pill">15 min</span>
+      </div>
+      <div class="g-card">
+        <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&q=80" alt="Brownie" loading="lazy" />
+        <div class="gc-overlay"><div class="quick-btn">Ver receita</div></div>
+        <div class="gc-info"><h4>Brownie de Chocolate</h4><span>Air Fryer · 10 min</span></div>
+        <span class="gc-pill">10 min</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ BLOCO 5 — BÔNUS ══ -->
+  <section class="bonus">
+    <div class="bonus-head">
+      <span class="b-tag reveal">🎁 Bônus exclusivos</span>
+      <h2 class="reveal reveal-d1">7 bônus<br><span class="outline">incluídos</span></h2>
+      <p class="reveal reveal-d2">Sem custo adicional — apenas para quem adicionar agora.</p>
+    </div>
+    <div class="bonus-grid">
+      <div class="bonus-item reveal reveal-d1">
+        <span class="bi-num">01</span>
+        <span class="bi-ico">🍝</span>
+        <div class="bi-text">
+          <h4>Massas Caseiras</h4>
+          <p>Tagliatelle, nhoque, ravióli, lasanha — do zero, sem segredo guardado.</p>
+        </div>
+      </div>
+      <div class="bonus-item reveal reveal-d2">
+        <span class="bi-num">02</span>
+        <span class="bi-ico">🍕</span>
+        <div class="bi-text">
+          <h4>Pizzas Artesanais</h4>
+          <p>A massa certa, o molho que faz diferença. Para as noites de sexta que todo mundo pede para repetir.</p>
+        </div>
+      </div>
+      <div class="bonus-item reveal reveal-d3">
+        <span class="bi-num">03</span>
+        <span class="bi-ico">🍦</span>
+        <div class="bi-text">
+          <h4>Gelatos Artesanais</h4>
+          <p>Textura cremosa do gelato italiano, feito em casa, sem máquina especial.</p>
+        </div>
+      </div>
+      <div class="bonus-item reveal reveal-d4">
+        <span class="bi-num">04</span>
+        <span class="bi-ico">🍪</span>
+        <div class="bi-text">
+          <h4>Cookies Irresistíveis</h4>
+          <p>Crocante por fora, macio por dentro. As pessoas pedem a receita logo no primeiro mordisco.</p>
+        </div>
+      </div>
+      <div class="bonus-item reveal reveal-d5">
+        <span class="bi-num">05</span>
+        <span class="bi-ico">🌾</span>
+        <div class="bi-text">
+          <h4>Receitas sem Glúten</h4>
+          <p>Testadas, com resultado. Para quem tem restrição ou quer ter opções inclusivas na mesa.</p>
+        </div>
+      </div>
+      <div class="bonus-item reveal reveal-d6">
+        <span class="bi-num">06</span>
+        <span class="bi-ico">📋</span>
+        <div class="bi-text">
+          <h4>Notion: Planejamento de Receitas</h4>
+          <p>Template pronto para organizar o cardápio da semana e do mês — com lista de compras baseada nas receitas que você escolher.</p>
+        </div>
+      </div>
+      <div class="bonus-item span2 reveal reveal-d7">
+        <span class="bi-num">07</span>
+        <span class="bi-ico">🍔</span>
+        <div class="bi-text">
+          <h4>Fast Food FIT</h4>
+          <p>Hambúrguer, frango empanado, batata frita no forno — feitos em casa, sem abrir mão do sabor.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ANCORAGEM ══ -->
+  <section class="ancora">
+    <h2 class="reveal">Tudo isso por<br>quanto vale?</h2>
+    <p class="reveal reveal-d1">Se você fosse comprar cada bônus separado, já estaria pagando mais do que o valor total desta oferta. Fora as +150 receitas em vídeo da coleção principal — avaliada em R$147.</p>
+    <div class="ancora-num-row reveal reveal-d2">
+      <div class="an-item">
+        <div class="an-n">+150</div>
+        <div class="an-l">Receitas em vídeo</div>
+      </div>
+      <div class="an-sep"></div>
+      <div class="an-item">
+        <div class="an-n">7</div>
+        <div class="an-l">Bônus exclusivos</div>
+      </div>
+      <div class="an-sep"></div>
+      <div class="an-item">
+        <div class="an-n">R$147</div>
+        <div class="an-l">Valor original</div>
+      </div>
+      <div class="an-sep"></div>
+      <div class="an-item">
+        <div class="an-n" style="color:var(--sage)">R$77</div>
+        <div class="an-l">Só agora</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ BLOCO 6 — OFERTA ══ -->
+  <section class="oferta" id="oferta">
+    <div class="oferta-inner">
+      <div class="oferta-left">
+        <span class="o-tag reveal">O que você leva hoje</span>
+        <h2 class="reveal reveal-d1">Air Fryer<br>em 15 Min<br>+ 7 bônus</h2>
+        <div class="checklist reveal reveal-d2">
+          <div class="check-item"><span class="ci">✓</span>+150 receitas em vídeo passo a passo na Air Fryer</div>
+          <div class="check-item"><span class="ci">✓</span>Ebook completo para baixar e imprimir</div>
+          <div class="check-item"><span class="ci">✓</span>Acesso vitalício — paga uma vez, tem para sempre</div>
+          <div class="check-item"><span class="ci outline-ci">+</span>Bônus 01 — Massas Caseiras</div>
+          <div class="check-item"><span class="ci outline-ci">+</span>Bônus 02 — Pizzas Artesanais</div>
+          <div class="check-item"><span class="ci outline-ci">+</span>Bônus 03 — Gelatos Artesanais</div>
+          <div class="check-item"><span class="ci outline-ci">+</span>Bônus 04 — Cookies Irresistíveis</div>
+          <div class="check-item"><span class="ci outline-ci">+</span>Bônus 05 — Receitas sem Glúten</div>
+          <div class="check-item"><span class="ci outline-ci">+</span>Bônus 06 — Notion Planejamento</div>
+          <div class="check-item"><span class="ci outline-ci">+</span>Bônus 07 — Fast Food FIT</div>
+        </div>
+      </div>
+      <div class="oferta-right">
+        <div class="oferta-card reveal reveal-d2">
+          <span class="oc-tag">Oferta exclusiva · Só agora</span>
+          <div class="oc-title">Air Fryer em<br>15 Minutos<br>+ 7 Bônus</div>
+          <p class="oc-sub">Adicionado ao seu pedido com 1 clique. Sem preencher nada de novo.</p>
+          <div class="preco-wrap">
+            <div class="pw-de">De R$ 147,00</div>
+            <div class="pw-eco">Você economiza R$ 70</div>
+            <div class="pw-por"><sup>R$</sup>77</div>
+            <div class="pw-obs">pagamento único · acesso imediato · sem mensalidade</div>
+          </div>
+          <a href="#" class="btn-oferta">✓ Adicionar ao meu pedido — R$ 77</a>
+          <div class="oc-selos">
+            <span>🔒 Seguro</span>
+            <span>📱 Acesso imediato</span>
+            <span>♾️ Vitalício</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ BLOCO 7 — CTA FINAL ══ -->
+  <section class="cta-final">
+    <div class="cta-bg-text">AIR FRYER</div>
+    <div class="garantia-strip reveal">
+      <span>🛡️ Garantia incondicional de 7 dias · 100% do dinheiro de volta</span>
+    </div>
+    <h2 class="reveal reveal-d1">
+      Sua Air Fryer<br>
+      <span class="outline">está esperando</span><br>
+      este complemento
+    </h2>
+    <p class="reveal reveal-d2">
+      Você já tem o café da manhã. Complete agora com +150 receitas para o dia inteiro — em 15 minutos, em vídeo, com 7 bônus incluídos.
+    </p>
+    <a href="#" class="btn-final reveal reveal-d3">Adicionar ao meu pedido — R$ 77 →</a>
+    <a href="#" class="recusar reveal reveal-d4">Não, obrigado. Prefiro dispensar esta oferta e seguir apenas com o café da manhã.</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 Receitinha do Dia · Todos os direitos reservados</p>
+    <p><a href="#">Política de Privacidade</a> · Esta é uma oferta exclusiva pós-compra.</p>
+  </footer>
+
+  <script>
+    // ─── SCROLL REVEAL ───
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // ─── PARALLAX FLOAT IMGS ───
+    const floatImgs = document.querySelectorAll('.hero-float-img');
+    window.addEventListener('scroll', () => {
+      const sy = window.scrollY;
+      floatImgs.forEach((img, i) => {
+        const speed = [0.04, 0.06, 0.03][i] || 0.04;
+        img.style.transform = `translateY(${sy * speed}px)`;
+      });
+    }, { passive: true });
+  </script>
+</body>
+</html>
